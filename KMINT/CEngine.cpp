@@ -8,6 +8,7 @@
 #include <iostream>
 #include <SDL.h>
 #include "SDL_image.h"
+#include "CEntityBee.h"
 
 CEngine::CEngine()
 {
@@ -25,6 +26,10 @@ CEngine::CEngine()
 	
 	SDL_Surface* icon = IMG_Load("Resources/Images/favicon.ico");
 	SDL_SetWindowIcon(window, icon);
+
+	for (int i = 0; i < 100; i++) {
+		beeList.push_back(new CEntityBee(this));
+	}
 
 	Tick();
 }

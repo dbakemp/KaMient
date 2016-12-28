@@ -13,15 +13,10 @@ public:
 	CEntity(CEngine* engine);
 	~CEntity();
 	void Update();
-	virtual void CollisionBegin(CEntity* collider);
-	virtual void CollisionEnd(CEntity* collider);
 
 	enum class Type
 	{
-		CAR,
-		CHECKPOINT,
-		WAYPOINT,
-		POWERUP
+		BEE
 	};
 
 	void SetType(Type type);

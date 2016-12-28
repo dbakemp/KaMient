@@ -90,7 +90,8 @@
     </Link>
     <PreBuildEvent>
       <Command>copy "$(SolutionDir)Libraries\SDL2\lib\x64\*.dll" "$(TargetDir)"
-copy "$(SolutionDir)Libraries\SDL2_Image\lib\x64\*.dll" "$(TargetDir)"</Command>
+copy "$(SolutionDir)Libraries\SDL2_Image\lib\x64\*.dll" "$(TargetDir)"
+xcopy "$(SolutionDir)\KMINT\Resources\*.*" "$(TargetDir)Resources" /Y /I /E</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -124,25 +125,31 @@ copy "$(SolutionDir)Libraries\SDL2_Image\lib\x64\*.dll" "$(TargetDir)"</Command>
     <ClCompile Include="CDrawManager.cpp" />
     <ClCompile Include="CEngine.cpp" />
     <ClCompile Include="CEntity.cpp" />
+    <ClCompile Include="CEntityBee.cpp" />
     <ClCompile Include="CEntityManager.cpp" />
     <ClCompile Include="CInputManager.cpp" />
+    <ClCompile Include="CIntegerHelper.cpp" />
     <ClCompile Include="CTextureManager.cpp" />
     <ClCompile Include="IDrawListener.cpp" />
     <ClCompile Include="IEntityListener.cpp" />
     <ClCompile Include="IInputListener.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="vector2d.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CDebugLogger.h" />
     <ClInclude Include="CDrawManager.h" />
     <ClInclude Include="CEngine.h" />
     <ClInclude Include="CEntity.h" />
+    <ClInclude Include="CEntityBee.h" />
     <ClInclude Include="CEntityManager.h" />
     <ClInclude Include="CInputManager.h" />
+    <ClInclude Include="CIntegerHelper.h" />
     <ClInclude Include="CTextureManager.h" />
     <ClInclude Include="IDrawListener.h" />
     <ClInclude Include="IEntityListener.h" />
     <ClInclude Include="IInputListener.h" />
+    <ClInclude Include="vector2d.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

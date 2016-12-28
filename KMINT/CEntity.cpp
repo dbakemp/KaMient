@@ -13,14 +13,6 @@ void CEntity::Update()
 {
 }
 
-void CEntity::CollisionBegin(CEntity* collider)
-{
-}
-
-void CEntity::CollisionEnd(CEntity* collider)
-{
-}
-
 void CEntity::SetType(Type type)
 {
 	this->type = type;
