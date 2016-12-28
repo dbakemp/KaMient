@@ -2,6 +2,7 @@
 #include "CDrawManager.h"
 #include "CTextureManager.h"
 #include "CIntegerHelper.h"
+#include "CEntityImker.h"
 #include <math.h>
 
 CEntityBee::CEntityBee(CEngine * engine) : CEntity(engine), IDrawListener(engine, (int)CDrawManager::Layers::Object), IInputListener(engine)
@@ -16,8 +17,11 @@ CEntityBee::CEntityBee(CEngine * engine) : CEntity(engine), IDrawListener(engine
 	float angle = CIntegerHelper::GetRandomIntBetween(0, M_PI*2);
 	velocity = {cos(angle), sin(angle)};
 	r = dstrect.w/2;
-	maxspeed = 2;
+	maxspeed = ((float)CIntegerHelper::GetRandomIntBetween(15, 30) / 10);
 	maxforce = 0.03;
+
+	imkerForce = ((float)CIntegerHelper::GetRandomIntBetween(0, 30) / 10);
+	imkerSense = ((float)CIntegerHelper::GetRandomIntBetween(100, 1500) / 10);
 }
 
 CEntityBee::~CEntityBee()
@@ -34,15 +38,18 @@ void CEntityBee::Draw(SDL_Renderer * renderer)
 void CEntityBee::Update()
 {
 	Vec2d sep = GetSeparation();   // Separation
+	Vec2d sepk = GetSeparationKeeper();   // Separation
 	Vec2d ali = GetAlignment();      // Alignment
 	Vec2d coh = GetCohesion();   // Cohesion
 									 // Arbitrarily weight these forces
-	sep = sep * 1.5f;
+	sep = sep * 1.5f;			 // Arbitrarily weight these forces
+	sepk = sepk * imkerForce;
 	ali = ali * 1.0f;
 	coh = coh * 1.0f;
 
 	// Add the force vectors to acceleration
 	acceleration = acceleration + sep;
+	acceleration = acceleration + sepk;
 	acceleration = acceleration + ali;
 	acceleration = acceleration + coh;
 
@@ -114,6 +121,7 @@ Vec2d CEntityBee::GetSeparation()
 			count++;            // Keep track of how many
 		}
 	}
+
 	// Average -- divide by how many
 	if (count > 0) {
 		steer = steer / (float)count;
@@ -128,6 +136,43 @@ Vec2d CEntityBee::GetSeparation()
 		// Implement Reynolds: Steering = Desired - Velocity
 		steer = steer.norm();
 		steer = steer * maxspeed;
+		steer = steer - velocity;
+		steer = steer.limit(maxforce);
+	}
+	return steer;
+}
+
+Vec2d CEntityBee::GetSeparationKeeper()
+{
+	float desiredseparation = 25.0f;
+	Vec2d steer = { 0, 0 };
+	int count = 0;
+	// For every boid in the system, check if it's too close
+	float d = position.distance_to(engine->imker->position);
+	// If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
+	if ((d > 0) && (d < imkerSense)) {
+		// Calculate vector pointing away from neighbor
+		Vec2d diff = position - engine->imker->position;
+		diff = diff.norm();
+		diff = diff / d;        // Weight by distance
+		steer = steer + diff;
+		count++;            // Keep track of how many
+	}
+
+	// Average -- divide by how many
+	if (count > 0) {
+		steer = steer / (float)count;
+	}
+
+	// As long as the vector is greater than 0
+	if (steer.length() > 0) {
+		// First two lines of code below could be condensed with new PVector setMag() method
+		// Not using this method until Processing.js catches up
+		// steer.setMag(maxspeed);
+
+		// Implement Reynolds: Steering = Desired - Velocity
+		steer = steer.norm();
+		steer = steer;
 		steer = steer - velocity;
 		steer = steer.limit(maxforce);
 	}

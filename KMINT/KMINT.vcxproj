@@ -114,11 +114,20 @@ xcopy "$(SolutionDir)\KMINT\Resources\*.*" "$(TargetDir)Resources" /Y /I /E</Com
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libraries\SDL2\include;$(SolutionDir)Libraries\SDL2_Image\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)Libraries\SDL2\lib\x64;$(SolutionDir)Libraries\SDL2_Image\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2test.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Console</SubSystem>
     </Link>
+    <PreBuildEvent>
+      <Command>copy "$(SolutionDir)Libraries\SDL2\lib\x64\*.dll" "$(TargetDir)"
+copy "$(SolutionDir)Libraries\SDL2_Image\lib\x64\*.dll" "$(TargetDir)"
+xcopy "$(SolutionDir)\KMINT\Resources\*.*" "$(TargetDir)Resources" /Y /I /E</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CDebugLogger.cpp" />
@@ -126,7 +135,12 @@ xcopy "$(SolutionDir)\KMINT\Resources\*.*" "$(TargetDir)Resources" /Y /I /E</Com
     <ClCompile Include="CEngine.cpp" />
     <ClCompile Include="CEntity.cpp" />
     <ClCompile Include="CEntityBee.cpp" />
+    <ClCompile Include="CEntityEdge.cpp" />
+    <ClCompile Include="CEntityImker.cpp" />
     <ClCompile Include="CEntityManager.cpp" />
+    <ClCompile Include="CEntityMapBackground.cpp" />
+    <ClCompile Include="CEntityVertex.cpp" />
+    <ClCompile Include="CGraph.cpp" />
     <ClCompile Include="CInputManager.cpp" />
     <ClCompile Include="CIntegerHelper.cpp" />
     <ClCompile Include="CTextureManager.cpp" />
@@ -142,7 +156,12 @@ xcopy "$(SolutionDir)\KMINT\Resources\*.*" "$(TargetDir)Resources" /Y /I /E</Com
     <ClInclude Include="CEngine.h" />
     <ClInclude Include="CEntity.h" />
     <ClInclude Include="CEntityBee.h" />
+    <ClInclude Include="CEntityEdge.h" />
+    <ClInclude Include="CEntityImker.h" />
     <ClInclude Include="CEntityManager.h" />
+    <ClInclude Include="CEntityMapBackground.h" />
+    <ClInclude Include="CEntityVertex.h" />
+    <ClInclude Include="CGraph.h" />
     <ClInclude Include="CInputManager.h" />
     <ClInclude Include="CIntegerHelper.h" />
     <ClInclude Include="CTextureManager.h" />

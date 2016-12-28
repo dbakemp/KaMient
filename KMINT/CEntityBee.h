@@ -19,6 +19,7 @@ public:
 
 	Vec2d GetAlignment();
 	Vec2d GetSeparation();
+	Vec2d GetSeparationKeeper();
 	Vec2d GetCohesion();
 
 	Vec2d position;
@@ -27,6 +28,9 @@ public:
 	float r;
 	float maxforce;
 	float maxspeed;
+
+	float imkerSense;
+	float imkerForce;
 
 	double DistanceTo(CEntityBee* agent);
 

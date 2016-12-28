@@ -9,6 +9,7 @@ class CInputManager;
 class CEntityManager;
 class CTextureManager;
 class CEntityBee;
+class CEntityImker;
 
 class CEngine
 {
@@ -24,6 +25,7 @@ public:
 	bool running;
 	int windowHeight, windowWidth;
 	std::vector<CEntityBee*> beeList;
+	CEntityImker* imker;
 private:
 	void Tick();
 };
