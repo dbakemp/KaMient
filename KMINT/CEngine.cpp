@@ -32,7 +32,7 @@ CEngine::CEngine()
 
 	CEntityMapBackground* background = new CEntityMapBackground(this);
 
-	CGraph* graph = new CGraph(this);
+	graph = new CGraph(this);
 
 	CEntityVertex* vertex103 = new CEntityVertex(this, 28, 31);
 	graph->AddVertex(vertex103);
@@ -253,6 +253,7 @@ CEngine::CEngine()
 	CEntityVertex* vertex325 = new CEntityVertex(this, 190, 576);
 	graph->AddVertex(vertex325);
 	CEntityVertex* vertex327 = new CEntityVertex(this, 384, 555); // Dit is de basis rechtsonder
+	graph->baseVertex = vertex327;
 	graph->AddVertex(vertex327);
 	graph->AddEdge(new CEntityEdge(this, vertex103, vertex104));
 	graph->AddEdge(new CEntityEdge(this, vertex106, vertex105));
@@ -373,7 +374,7 @@ CEngine::CEngine()
 
 	imker = new CEntityImker(this);
 
-	for (int i = 0; i < 100; i++) {
+	for (int i = 0; i < 5; i++) {
 		beeList.push_back(new CEntityBee(this));
 	}
 
@@ -410,6 +411,11 @@ void CEngine::Tick()
 
 		entityManager->Tick();
 		drawManager->Tick(renderer);
+
+		std::vector<CEntityEdge*> places = graph->AStar(graph->baseVertex, imker->GetNearestBee()->GetNearestVertex());
+		for (CEntityEdge* edge : places) {
+			SDL_RenderDrawLine(renderer, edge->vertexA->position.x, edge->vertexA->position.y, edge->vertexB->position.x, edge->vertexB->position.y);
+		}
 		SDL_Delay(16);
 	}
 }

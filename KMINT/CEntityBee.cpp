@@ -3,6 +3,7 @@
 #include "CTextureManager.h"
 #include "CIntegerHelper.h"
 #include "CEntityImker.h"
+#include "CGraph.h"
 #include <math.h>
 
 CEntityBee::CEntityBee(CEngine * engine) : CEntity(engine), IDrawListener(engine, (int)CDrawManager::Layers::Object), IInputListener(engine)
@@ -30,8 +31,8 @@ CEntityBee::~CEntityBee()
 
 void CEntityBee::Draw(SDL_Renderer * renderer)
 {
-	dstrect.x = position.x;
-	dstrect.y = position.y;
+	dstrect.x = position.x-dstrect.w/2;
+	dstrect.y = position.y-dstrect.h/2;
 	SDL_RenderCopy(renderer, texture, NULL, &dstrect);
 }
 
@@ -71,6 +72,21 @@ void CEntityBee::Update()
 
 void CEntityBee::Input(SDL_Event * event)
 {
+}
+
+CEntityVertex* CEntityBee::GetNearestVertex()
+{
+	nearestVertex = nullptr;
+	float closest = NULL;
+	for (CEntityVertex* other : engine->graph->vertexList) {
+		float d = position.distance_to(other->position);
+		if (d < closest || closest == NULL) {
+			nearestVertex = other;
+			closest = d;
+		}
+	}
+
+	return nearestVertex;
 }
 
 Vec2d CEntityBee::GetAlignment()

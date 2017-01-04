@@ -6,6 +6,7 @@
 #include "CEntity.h"
 #include "CEngine.h"
 #include "vector2d.hpp"
+#include "CEntityVertex.h"
 
 class CEntityBee : public CEntity, public IDrawListener, public IInputListener
 {
@@ -16,6 +17,8 @@ public:
 	void Draw(SDL_Renderer* renderer);
 	void Update();
 	void Input(SDL_Event* event);
+
+	CEntityVertex* GetNearestVertex();
 
 	Vec2d GetAlignment();
 	Vec2d GetSeparation();
@@ -33,7 +36,7 @@ public:
 	float imkerForce;
 
 	double DistanceTo(CEntityBee* agent);
-
+	CEntityVertex* nearestVertex;
 private:
 	CEngine* engine;
 	int neighbourCount;

@@ -1,6 +1,7 @@
 #include "CEntityVertex.h"
 #include "CDrawManager.h"
 #include "CEntityBee.h"
+#include "CEntityEdge.h";
 
 CEntityVertex::CEntityVertex(CEngine * engine, int x, int y) : CEntity(engine), IDrawListener(engine, (int)CDrawManager::Layers::Tile+2)
 {
@@ -31,4 +32,21 @@ void CEntityVertex::Update()
 			neighbourCount++;
 		}
 	}
+}
+
+int CEntityVertex::GetScore()
+{
+	return 0;
+}
+
+CEntityEdge * CEntityVertex::GetEdge(CEntityVertex * previous)
+{
+	for (CEntityEdge* edge : edges) {
+		CEntityVertex* neighbor = edge->GetNeighbor(this);
+		if (neighbor == previous) {
+			return edge;
+		}
+	}
+
+	return nullptr;
 }

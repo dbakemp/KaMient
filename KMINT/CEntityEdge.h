@@ -16,11 +16,14 @@ public:
 
 	void Draw(SDL_Renderer* renderer);
 	void Update();
+	CEntityVertex* GetNeighbor(CEntityVertex* current);
 
 	CEntityVertex* vertexA;
 	CEntityVertex* vertexB;
+	int cost = 0;
 private:
 	CEngine* engine;
+
 };
 
 #endif

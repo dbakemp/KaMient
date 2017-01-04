@@ -17,6 +17,7 @@ void CDrawManager::RemoveListener(IDrawListener* drawListener)
 
 void CDrawManager::Tick(SDL_Renderer* renderer)
 {
+	SDL_RenderPresent(renderer);
 	SDL_RenderClear(renderer);
 
 	for (int i = 0; i < 25; i++)
@@ -35,7 +36,6 @@ void CDrawManager::Tick(SDL_Renderer* renderer)
 		}
 	}
 
-	SDL_RenderPresent(renderer);
 }
 
 void CDrawManager::ChangeZIndex(IDrawListener* drawListener, int index)

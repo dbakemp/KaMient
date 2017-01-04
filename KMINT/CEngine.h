@@ -10,6 +10,7 @@ class CEntityManager;
 class CTextureManager;
 class CEntityBee;
 class CEntityImker;
+class CGraph;
 
 class CEngine
 {
@@ -26,6 +27,7 @@ public:
 	int windowHeight, windowWidth;
 	std::vector<CEntityBee*> beeList;
 	CEntityImker* imker;
+	CGraph* graph;
 private:
 	void Tick();
 };

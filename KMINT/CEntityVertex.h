@@ -7,6 +7,8 @@
 #include "CEngine.h"
 #include "vector2d.hpp"
 
+class CEntityEdge;
+
 class CEntityVertex : public CEntity, public IDrawListener
 {
 public:
@@ -15,10 +17,16 @@ public:
 
 	void Draw(SDL_Renderer* renderer);
 	void Update();
+	int GetScore();
 	int neighbourCount;
+	int score;
 	Vec2d position;
+	std::vector<CEntityEdge*> edges;
+	CEntityEdge* GetEdge(CEntityVertex* previous);
 private:
 	CEngine* engine;
+
+	int weight = 0;
 };
 
 #endif
