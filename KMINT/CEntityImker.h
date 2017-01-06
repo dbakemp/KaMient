@@ -20,6 +20,7 @@ public:
 	void Update();
 	Vec2d position;
 	CEntityVertex* currentVertex;
+	std::vector<CEntityEdge*> places;
 private:
 	CEngine* engine;
 	CEntityBee* nearestBee;

@@ -29,23 +29,27 @@ void CEntityImker::Draw(SDL_Renderer * renderer)
 
 void CEntityImker::Update()
 {
-	CEntityBee* nearestBee = GetNearestBee();
-	if (nearestBee != nullptr) {
-		CEntityVertex* nearestVertex = nearestBee->GetNearestVertex();
+	CEntityBee* bee = GetNearestBee();
+	if (bee != nullptr) {
+		CEntityVertex* nearestVertex = bee->GetNearestVertex();
+		if (bee != nearestBee) {
+			nearestBee = bee;
+			places = engine->graph->AStar(engine->graph->baseVertex, nearestVertex);
+		}
 	}
 }
 
 CEntityBee* CEntityImker::GetNearestBee()
 {
-	nearestBee = nullptr;
+	CEntityBee* bee = nullptr;
 	float closest = NULL;
 	for (CEntityBee* other : engine->beeList) {
 		float d = position.distance_to(other->position);
 		if (d < closest || closest == NULL) {
-			nearestBee = other;
+			bee = other;
 			closest = d;
 		}
 	}
 
-	return nearestBee;
+	return bee;
 }

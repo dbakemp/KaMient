@@ -374,7 +374,7 @@ CEngine::CEngine()
 
 	imker = new CEntityImker(this);
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 100; i++) {
 		beeList.push_back(new CEntityBee(this));
 	}
 
@@ -395,6 +395,7 @@ CEngine::~CEngine()
 void CEngine::Tick()
 {
 	running = true;
+	float scale = 16.0f;
 
 	while (running)
 	{
@@ -406,16 +407,29 @@ void CEngine::Tick()
 				running = false;
 				SDL_Quit();
 			}
+			else if (event.type == SDL_KEYDOWN) {
+				if (event.key.keysym.sym == SDLK_DOWN) {
+					scale -= 1.45f;
+					if (scale < 1.45f) {
+						scale = 1.45f;
+					}
+				}
+				else if (event.key.keysym.sym == SDLK_UP) {
+					scale += 1.45f;
+					if (scale > 16.0f) {
+						scale = 16.0f;
+					}
+				}
+			}
 			inputManager->Tick(&event);
 		}
 
 		entityManager->Tick();
 		drawManager->Tick(renderer);
 
-		std::vector<CEntityEdge*> places = graph->AStar(graph->baseVertex, imker->GetNearestBee()->GetNearestVertex());
-		for (CEntityEdge* edge : places) {
+		for (CEntityEdge* edge : imker->places) {
 			SDL_RenderDrawLine(renderer, edge->vertexA->position.x, edge->vertexA->position.y, edge->vertexB->position.x, edge->vertexB->position.y);
 		}
-		SDL_Delay(16);
+		SDL_Delay(scale);
 	}
 }
