@@ -8,6 +8,7 @@
 #include "vector2d.hpp"
 #include "CEntityVertex.h"
 #include "CEntityBee.h"
+#include "CState.h"
 
 class CEntityImker : public CEntity, public IDrawListener
 {
@@ -20,11 +21,25 @@ public:
 	void Update();
 	Vec2d position;
 	CEntityVertex* currentVertex;
-	std::vector<CEntityEdge*> places;
-private:
+	CEntityVertex* nextVertex;
+	CEntityEdge* currentEdge;
+	std::vector<CEntityEdge*> currentPath;
+	void ChangeState(CState* state);
+	void WalkTo(CEntityVertex* vertex);
+	bool walking;
+	int radius;
+	int ticks;
+	int radiusTicks;
 	CEngine* engine;
 	CEntityBee* nearestBee;
-	
+	CState* currentState;
+	int beeCounter;
+	int speedMod;
+
+	double chancePowerup;
+	double chanceBase;
+	double chancePanic;
+private:
 };
 
 #endif

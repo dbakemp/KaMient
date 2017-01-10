@@ -2,6 +2,7 @@
 #include "limits.h"
 #include <set>
 #include <map>
+#include <vector>
 #include <algorithm>
 
 struct MapSort
@@ -118,6 +119,7 @@ std::vector<CEntityEdge*> CGraph::reconstructPath(std::map<CEntityVertex*, CEnti
 		}
 	}
 
+	std::reverse(totalPath.begin(), totalPath.end());
 	return totalPath;
 }
 

@@ -23,6 +23,8 @@ CEntityBee::CEntityBee(CEngine * engine) : CEntity(engine), IDrawListener(engine
 
 	imkerForce = ((float)CIntegerHelper::GetRandomIntBetween(0, 30) / 10);
 	imkerSense = ((float)CIntegerHelper::GetRandomIntBetween(100, 1500) / 10);
+	caught = false;
+	ticks = 0;
 }
 
 CEntityBee::~CEntityBee()
@@ -31,43 +33,49 @@ CEntityBee::~CEntityBee()
 
 void CEntityBee::Draw(SDL_Renderer * renderer)
 {
-	dstrect.x = position.x-dstrect.w/2;
-	dstrect.y = position.y-dstrect.h/2;
-	SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+	if (!caught) {
+		dstrect.x = position.x - dstrect.w / 2;
+		dstrect.y = position.y - dstrect.h / 2;
+		SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+	}
 }
 
 void CEntityBee::Update()
 {
-	Vec2d sep = GetSeparation();   // Separation
-	Vec2d sepk = GetSeparationKeeper();   // Separation
-	Vec2d ali = GetAlignment();      // Alignment
-	Vec2d coh = GetCohesion();   // Cohesion
+	if (!caught) {
+		Vec2d sep = GetSeparation();   // Separation
+		Vec2d sepk = GetSeparationKeeper();   // Separation
+		Vec2d ali = GetAlignment();      // Alignment
+		Vec2d coh = GetCohesion();   // Cohesion
 									 // Arbitrarily weight these forces
-	sep = sep * 1.5f;			 // Arbitrarily weight these forces
-	sepk = sepk * imkerForce;
-	ali = ali * 1.0f;
-	coh = coh * 1.0f;
+		sep = sep * 1.5f;			 // Arbitrarily weight these forces
+		sepk = sepk * imkerForce;
+		ali = ali * 1.0f;
+		coh = coh * 1.0f;
 
-	// Add the force vectors to acceleration
-	acceleration = acceleration + sep;
-	acceleration = acceleration + sepk;
-	acceleration = acceleration + ali;
-	acceleration = acceleration + coh;
+		// Add the force vectors to acceleration
+		acceleration = acceleration + sep;
+		acceleration = acceleration + sepk;
+		acceleration = acceleration + ali;
+		acceleration = acceleration + coh;
 
-	velocity = velocity + acceleration;
-	// Limit speed
-	if (velocity.length() > maxspeed) {
-		int i = 0;
+		velocity = velocity + acceleration;
+		// Limit speed
+		if (velocity.length() > maxspeed) {
+			int i = 0;
+		}
+		velocity = velocity.limit(maxspeed);
+		position = position + velocity;
+		// Reset accelertion to 0 each cycle
+		acceleration = { 0, 0 };
+
+		if (position.x < -r) position.x = engine->windowWidth + r;
+		if (position.y < -r) position.y = engine->windowHeight + r;
+		if (position.x > engine->windowWidth + r) position.x = -r;
+		if (position.y > engine->windowHeight + r) position.y = -r;
+
+		ticks++;
 	}
-	velocity = velocity.limit(maxspeed);
-	position = position + velocity;
-	// Reset accelertion to 0 each cycle
-	acceleration = { 0, 0 };
-
-	if (position.x < -r) position.x = engine->windowWidth + r;
-	if (position.y < -r) position.y = engine->windowHeight + r;
-	if (position.x > engine->windowWidth + r) position.x = -r;
-	if (position.y > engine->windowHeight + r) position.y = -r;
 }
 
 void CEntityBee::Input(SDL_Event * event)

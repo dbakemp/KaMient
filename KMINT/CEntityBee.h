@@ -37,6 +37,8 @@ public:
 
 	double DistanceTo(CEntityBee* agent);
 	CEntityVertex* nearestVertex;
+	bool caught;
+	int ticks;
 private:
 	CEngine* engine;
 	int neighbourCount;

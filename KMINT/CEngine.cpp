@@ -24,7 +24,7 @@ CEngine::CEngine()
 	textureManager = new CTextureManager(this);
 
 	SDL_Init(SDL_INIT_EVERYTHING);
-	window = SDL_CreateWindow("KMINT", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+	window = SDL_CreateWindow("KMINT", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 	
 	SDL_Surface* icon = IMG_Load("Resources/Images/favicon.ico");
@@ -408,13 +408,13 @@ void CEngine::Tick()
 				SDL_Quit();
 			}
 			else if (event.type == SDL_KEYDOWN) {
-				if (event.key.keysym.sym == SDLK_DOWN) {
+				if (event.key.keysym.sym == SDLK_UP) {
 					scale -= 1.45f;
 					if (scale < 1.45f) {
 						scale = 1.45f;
 					}
 				}
-				else if (event.key.keysym.sym == SDLK_UP) {
+				else if (event.key.keysym.sym == SDLK_DOWN) {
 					scale += 1.45f;
 					if (scale > 16.0f) {
 						scale = 16.0f;
@@ -427,9 +427,18 @@ void CEngine::Tick()
 		entityManager->Tick();
 		drawManager->Tick(renderer);
 
-		for (CEntityEdge* edge : imker->places) {
+		for (CEntityEdge* edge : imker->currentPath) {
 			SDL_RenderDrawLine(renderer, edge->vertexA->position.x, edge->vertexA->position.y, edge->vertexB->position.x, edge->vertexB->position.y);
 		}
+
+		for (int i = beeList.size() - 1; i >= 0; i--) {
+			if (beeList[i]->caught) {
+				CEntityBee* bee = beeList.at(i);
+				beeList.erase(beeList.begin()+i);
+				caughtBees.push_back(bee);
+			}
+		}
+
 		SDL_Delay(scale);
 	}
 }

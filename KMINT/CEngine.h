@@ -26,6 +26,7 @@ public:
 	bool running;
 	int windowHeight, windowWidth;
 	std::vector<CEntityBee*> beeList;
+	std::vector<CEntityBee*> caughtBees;
 	CEntityImker* imker;
 	CGraph* graph;
 private:
