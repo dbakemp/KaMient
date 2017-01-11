@@ -69,18 +69,38 @@ std::vector<CEntityEdge*> CGraph::AStar(CEntityVertex* start, CEntityVertex* goa
 
 		for (CEntityEdge* edge : current->edges) {
 			CEntityVertex* neighbor = edge->GetNeighbor(current);
-			
-			if (std::find(closedSet.begin(), closedSet.end(), neighbor) != closedSet.end()) {
+
+			// <troep>
+			bool found = false;
+			for (CEntityVertex* closedVertex : closedSet) {
+				if (closedVertex == neighbor) {
+					found = true;
+					break;
+				}
+			}
+			if (found) {
 				continue;
 			}
+			// </troep>
 
 			int tenativeGScore = gScore.find(current)->second + distanceBetween(current, neighbor);
 
-			if (std::find(openSet.begin(), openSet.end(), neighbor) == openSet.end()) {
+
+			// <troep>
+			found = false;
+			for (CEntityVertex* closedVertex : openSet) {
+				if (closedVertex == neighbor) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
 				openSet.push_back(neighbor);
-			} else {
+			}
+			else {
 				continue;
 			}
+			// </troep>
 
 			cameFrom.insert(std::pair<CEntityVertex*, CEntityVertex*>(neighbor, current));
 			gScore.insert(std::pair<CEntityVertex*, int>(neighbor, tenativeGScore));
