@@ -21,7 +21,6 @@ public:
 	CEntityVertex* vertexA;
 	CEntityVertex* vertexB;
 	int cost = 0;
-
 private:
 	CEngine* engine;
 

@@ -15,7 +15,6 @@ public:
 
 	void AddVertex(CEntityVertex* vertex);
 	void AddEdge(CEntityEdge* edge);
-
 	std::vector<CEntityEdge*> AStar(CEntityVertex* start, CEntityVertex* goal);
 	int heuristicCostEstimate(CEntityVertex* start, CEntityVertex* goal);
 	std::vector<CEntityEdge*> reconstructPath(std::map<CEntityVertex*, CEntityVertex*> cameFrom, CEntityVertex* current);
@@ -23,6 +22,7 @@ public:
 
 	std::vector<CEntityVertex*> vertexList;
 	std::vector<CEntityEdge*> edgeList;
+
 	CEntityVertex* baseVertex;
 private:
 	CEngine* engine;
