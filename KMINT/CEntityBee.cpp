@@ -6,7 +6,7 @@
 #include "CGraph.h"
 #include <math.h>
 
-CEntityBee::CEntityBee(CEngine * engine) : CEntity(engine), IDrawListener(engine, (int)CDrawManager::Layers::Object), IInputListener(engine)
+CEntityBee::CEntityBee(CEngine * engine, std::string bitstring) : CEntity(engine), IDrawListener(engine, (int)CDrawManager::Layers::Object), IInputListener(engine)
 {
 	this->engine = engine;
 	this->SetType(Type::BEE);
@@ -22,9 +22,17 @@ CEntityBee::CEntityBee(CEngine * engine) : CEntity(engine), IDrawListener(engine
 
 	genetics = new BeeGenetics();
 
-	genetics->maxspeed = ((float)CIntegerHelper::GetRandomIntBetween(15, 30) / 10);
-	genetics->imkerForce = ((float)CIntegerHelper::GetRandomIntBetween(0, 30) / 10);
-	genetics->imkerSense = ((float)CIntegerHelper::GetRandomIntBetween(100, 1500) / 10);
+	if (bitstring == "") {
+		genetics->maxspeed = ((float)CIntegerHelper::GetRandomIntBetween(15, 30) / 10);
+		genetics->imkerForce = ((float)CIntegerHelper::GetRandomIntBetween(0, 30) / 10);
+		genetics->imkerSense = ((float)CIntegerHelper::GetRandomIntBetween(100, 1500) / 10);
+	}
+	else
+	{
+		genetics->imkerForce = (double)CIntegerHelper::BitStringToInt(bitstring.substr(0, 5))/10;
+		genetics->imkerSense = (double)CIntegerHelper::BitStringToInt(bitstring.substr(5, 11))/10;
+		genetics->maxspeed = (double)CIntegerHelper::BitStringToInt(bitstring.substr(16, 5))/10;
+	}
 
 	caught = false;
 	ticks = 0;
@@ -246,4 +254,13 @@ double CEntityBee::DistanceTo(CEntityBee* agent)
 	double hyp = std::hypot(x, y);
 
 	return hyp;
+}
+
+std::string CEntityBee::GetBeeGeneticString()
+{
+	std::string imkerForceBit = std::bitset<5>(genetics->imkerForce*10).to_string();
+	std::string imkerSenseBit = std::bitset<11>(genetics->imkerSense*10).to_string();
+	std::string maxSpeedBit = std::bitset<5>(genetics->maxspeed*10).to_string();
+
+	return imkerForceBit + imkerSenseBit + maxSpeedBit;
 }

@@ -12,6 +12,10 @@
 #include "CEntityMapBackground.h"
 #include "CGraph.h"
 #include "CEntityImker.h"
+#include "CDebugLogger.h"
+#include <math.h>
+#include "CIntegerHelper.h"
+#include <algorithm>
 
 CEngine::CEngine()
 {
@@ -29,9 +33,150 @@ CEngine::CEngine()
 	
 	SDL_Surface* icon = IMG_Load("Resources/Images/favicon.ico");
 	SDL_SetWindowIcon(window, icon);
+	
+	background = nullptr;
+	graph = nullptr;
+	imker = nullptr;
 
-	CEntityMapBackground* background = new CEntityMapBackground(this);
+	genetic = false;
 
+	scale = 16.0f;
+
+	Start();
+	
+}
+
+CEngine::~CEngine()
+{
+	delete entityManager;
+	delete drawManager;
+	delete inputManager;
+	delete textureManager;
+
+	SDL_DestroyRenderer(renderer);
+	SDL_Quit();
+}
+
+void CEngine::Start()
+{
+
+	if (!genetic) {
+		entityManager->Clear();
+		caughtBees.clear();
+		beeList.clear();
+
+		for (int i = 0; i < 100; i++) {
+			beeList.push_back(new CEntityBee(this));
+		}
+	}
+	else {
+		struct GeneticStruct {
+			std::string dna;
+			int value;
+			double fraction;
+			double expection;
+		};
+
+		std::vector<GeneticStruct*> geneticVector;
+
+		int totalTicks = 0;
+		for (CEntityBee* bee : caughtBees) {
+			totalTicks += bee->ticks;
+		}
+
+		for (CEntityBee* bee : caughtBees) {
+			GeneticStruct* gStruct = new GeneticStruct();
+			gStruct->dna = bee->GetBeeGeneticString();
+			gStruct->value = bee->ticks;
+			gStruct->fraction = (double)gStruct->value / (double)totalTicks;
+			gStruct->expection = (double)caughtBees.size()*(double)gStruct->fraction;
+
+			geneticVector.push_back(gStruct);
+		}
+
+		struct ParticipateGenetics {
+			std::string dna;
+		};
+
+		std::vector<ParticipateGenetics*> participationVector;
+
+		for (GeneticStruct* gStruct : geneticVector) {
+			int participation = std::floor(gStruct->expection / 1);
+			gStruct->expection = std::fmod(gStruct->expection, 1);
+
+			ParticipateGenetics* partGenetic = new ParticipateGenetics();
+			partGenetic->dna = gStruct->dna;
+
+			for (int i = 0; i < participation; i++) {
+				participationVector.push_back(partGenetic);
+			}
+		}
+
+		double maxExpect = 0;
+		for (GeneticStruct* gStruct : geneticVector) {
+			maxExpect += gStruct->expection;
+		}
+
+		maxExpect *= 10000;
+
+		while (participationVector.size() < 100) {
+			double random = ((double)CIntegerHelper::GetRandomIntBetween(0, maxExpect) / 10000);
+
+			int stateInt = 0;
+
+			for (int i = 0; i < geneticVector.size(); i++) {
+				double totalChance = 0;
+				for (int o = i; o >= 0; o--) {
+					totalChance += geneticVector[i]->expection;
+				}
+				if (random <= totalChance) {
+					ParticipateGenetics* partGenetic = new ParticipateGenetics();
+					partGenetic->dna = geneticVector.at(i)->dna;
+					participationVector.push_back(partGenetic);
+					break;
+				}
+			}
+		}
+
+
+		std::vector<ParticipateGenetics*> participationCrossVector;
+
+		for (ParticipateGenetics* partGen : participationVector) {
+			ParticipateGenetics* partGenetic = new ParticipateGenetics();
+			partGenetic->dna = partGen->dna;
+			participationCrossVector.push_back(partGenetic);
+		}
+
+		std::random_shuffle(participationCrossVector.begin(), participationCrossVector.end());
+
+		entityManager->Clear();
+		caughtBees.clear();
+		beeList.clear();
+
+		for (int i = 0; i < participationVector.size(); i++) {
+			std::string newDna = "";
+			int split = CIntegerHelper::GetRandomIntBetween(0, participationVector[i]->dna.length());
+			newDna += participationVector[i]->dna.substr(0, split);
+			newDna += participationCrossVector[i]->dna.substr(split, participationVector[i]->dna.length()-split);
+
+			int mutation = CIntegerHelper::GetRandomIntBetween(0, 100);
+			if (mutation == 1) {
+				int mutationPos = CIntegerHelper::GetRandomIntBetween(0, newDna.length()-1);
+				if (newDna[mutationPos] == '1') {
+					newDna[mutationPos] = '0';
+				}
+				else {
+					newDna[mutationPos] = '1';
+				}
+			}
+
+			beeList.push_back(new CEntityBee(this, newDna));
+		}
+	}
+
+	background = new CEntityMapBackground(this);
+
+	delete graph;
 	graph = new CGraph(this);
 
 	CEntityVertex* vertex103 = new CEntityVertex(this, 28, 31);
@@ -374,28 +519,13 @@ CEngine::CEngine()
 
 	imker = new CEntityImker(this);
 
-	for (int i = 0; i < 100; i++) {
-		beeList.push_back(new CEntityBee(this));
-	}
-
 	Tick();
-}
-
-CEngine::~CEngine()
-{
-	delete entityManager;
-	delete drawManager;
-	delete inputManager;
-	delete textureManager;
-
-	SDL_DestroyRenderer(renderer);
-	SDL_Quit();
 }
 
 void CEngine::Tick()
 {
 	running = true;
-	float scale = 16.0f;
+	bool exit = false;
 
 	while (running)
 	{
@@ -405,13 +535,14 @@ void CEngine::Tick()
 			if (event.type == SDL_QUIT)
 			{
 				running = false;
+				exit = true;
 				SDL_Quit();
 			}
 			else if (event.type == SDL_KEYDOWN) {
 				if (event.key.keysym.sym == SDLK_UP) {
 					scale -= 1.45f;
-					if (scale < 1.45f) {
-						scale = 1.45f;
+					if (scale < 0) {
+						scale = 0;
 					}
 				}
 				else if (event.key.keysym.sym == SDLK_DOWN) {
@@ -419,6 +550,10 @@ void CEngine::Tick()
 					if (scale > 16.0f) {
 						scale = 16.0f;
 					}
+				}
+				else if (event.key.keysym.sym == SDLK_ESCAPE) {
+					running = false;
+					exit = false;
 				}
 			}
 			inputManager->Tick(&event);
@@ -439,6 +574,28 @@ void CEngine::Tick()
 			}
 		}
 
+		for (int i = caughtBees.size() - 1; i >= 0; i--) {
+			if (!caughtBees[i]->caught) {
+				CEntityBee* bee = caughtBees.at(i);
+				caughtBees.erase(caughtBees.begin() + i);
+				beeList.push_back(bee);
+			}
+		}
+
+		if (beeList.empty()) {
+			running = false;
+			exit = false;
+		}
+
 		SDL_Delay(scale);
+	}
+
+	for (CEntityBee* bee : caughtBees) {
+		CDebugLogger::PrintDebug(bee->GetBeeGeneticString());
+	}
+
+	if (exit == false) {
+		genetic = true;
+		Start();
 	}
 }

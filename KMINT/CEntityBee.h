@@ -11,7 +11,7 @@
 class CEntityBee : public CEntity, public IDrawListener, public IInputListener
 {
 public:
-	CEntityBee(CEngine* engine);
+	CEntityBee(CEngine* engine, std::string bitstring = "");
 	~CEntityBee();
 
 	void Draw(SDL_Renderer* renderer);
@@ -41,6 +41,8 @@ public:
 		float imkerSense;
 		float imkerForce;
 	};
+
+	std::string GetBeeGeneticString();
 
 	BeeGenetics* genetics;
 private:

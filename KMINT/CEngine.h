@@ -11,6 +11,7 @@ class CTextureManager;
 class CEntityBee;
 class CEntityImker;
 class CGraph;
+class CEntityMapBackground;
 
 class CEngine
 {
@@ -29,8 +30,14 @@ public:
 	std::vector<CEntityBee*> caughtBees;
 	CEntityImker* imker;
 	CGraph* graph;
+	float scale;
+
+	CEntityMapBackground* background;
+
+	void Start();
 private:
 	void Tick();
+	bool genetic;
 };
 
 #endif

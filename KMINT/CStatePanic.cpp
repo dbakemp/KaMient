@@ -19,6 +19,8 @@ void CStatePanic::Execute(CEntityImker * imker)
 
 	if (loseCounter >= 15) {
 		loseCounter = 0;
+		imker->engine->caughtBees[0]->caught = false;
+		imker->engine->caughtBees[0]->position = imker->position;
 		imker->beeCounter -= 1;
 	}
 
