@@ -18,11 +18,14 @@ CEntityBee::CEntityBee(CEngine * engine) : CEntity(engine), IDrawListener(engine
 	float angle = CIntegerHelper::GetRandomIntBetween(0, M_PI*2);
 	velocity = {cos(angle), sin(angle)};
 	r = dstrect.w/2;
-	maxspeed = ((float)CIntegerHelper::GetRandomIntBetween(15, 30) / 10);
 	maxforce = 0.03;
 
-	imkerForce = ((float)CIntegerHelper::GetRandomIntBetween(0, 30) / 10);
-	imkerSense = ((float)CIntegerHelper::GetRandomIntBetween(100, 1500) / 10);
+	genetics = new BeeGenetics();
+
+	genetics->maxspeed = ((float)CIntegerHelper::GetRandomIntBetween(15, 30) / 10);
+	genetics->imkerForce = ((float)CIntegerHelper::GetRandomIntBetween(0, 30) / 10);
+	genetics->imkerSense = ((float)CIntegerHelper::GetRandomIntBetween(100, 1500) / 10);
+
 	caught = false;
 	ticks = 0;
 }
@@ -49,7 +52,7 @@ void CEntityBee::Update()
 		Vec2d coh = GetCohesion();   // Cohesion
 									 // Arbitrarily weight these forces
 		sep = sep * 1.5f;			 // Arbitrarily weight these forces
-		sepk = sepk * imkerForce;
+		sepk = sepk * genetics->imkerForce;
 		ali = ali * 1.0f;
 		coh = coh * 1.0f;
 
@@ -61,10 +64,10 @@ void CEntityBee::Update()
 
 		velocity = velocity + acceleration;
 		// Limit speed
-		if (velocity.length() > maxspeed) {
+		if (velocity.length() > genetics->maxspeed) {
 			int i = 0;
 		}
-		velocity = velocity.limit(maxspeed);
+		velocity = velocity.limit(genetics->maxspeed);
 		position = position + velocity;
 		// Reset accelertion to 0 each cycle
 		acceleration = { 0, 0 };
@@ -117,7 +120,7 @@ Vec2d CEntityBee::GetAlignment()
 
 		// Implement Reynolds: Steering = Desired - Velocity
 		sum = sum.norm();
-		sum = sum * maxspeed;
+		sum = sum * genetics->maxspeed;
 		Vec2d steer = sum - velocity;
 		steer = steer.limit(maxforce);
 		return steer;
@@ -159,7 +162,7 @@ Vec2d CEntityBee::GetSeparation()
 
 		// Implement Reynolds: Steering = Desired - Velocity
 		steer = steer.norm();
-		steer = steer * maxspeed;
+		steer = steer * genetics->maxspeed;
 		steer = steer - velocity;
 		steer = steer.limit(maxforce);
 	}
@@ -174,7 +177,7 @@ Vec2d CEntityBee::GetSeparationKeeper()
 	// For every boid in the system, check if it's too close
 	float d = position.distance_to(engine->imker->position);
 	// If the distance is greater than 0 and less than an arbitrary amount (0 when you are yourself)
-	if ((d > 0) && (d < imkerSense)) {
+	if ((d > 0) && (d < genetics->imkerSense)) {
 		// Calculate vector pointing away from neighbor
 		Vec2d diff = position - engine->imker->position;
 		diff = diff.norm();
@@ -220,7 +223,7 @@ Vec2d CEntityBee::GetCohesion()
 		Vec2d desired = sum - position;  // A vector pointing from the position to the target
 														  // Scale to maximum speed
 		desired = desired.norm();
-		desired = desired * maxspeed;
+		desired = desired * genetics->maxspeed;
 
 		// Above two lines of code below could be condensed with new PVector setMag() method
 		// Not using this method until Processing.js catches up

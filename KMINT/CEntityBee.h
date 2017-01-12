@@ -30,15 +30,19 @@ public:
 	Vec2d acceleration;
 	float r;
 	float maxforce;
-	float maxspeed;
-
-	float imkerSense;
-	float imkerForce;
 
 	double DistanceTo(CEntityBee* agent);
 	CEntityVertex* nearestVertex;
 	bool caught;
 	int ticks;
+
+	struct BeeGenetics {
+		float maxspeed;
+		float imkerSense;
+		float imkerForce;
+	};
+
+	BeeGenetics* genetics;
 private:
 	CEngine* engine;
 	int neighbourCount;
