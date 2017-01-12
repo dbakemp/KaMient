@@ -12,6 +12,7 @@ class CEntityBee;
 class CEntityImker;
 class CGraph;
 class CEntityMapBackground;
+class CEntityPowerup;
 
 class CEngine
 {
@@ -35,6 +36,7 @@ public:
 	CEntityMapBackground* background;
 
 	void Start();
+	CEntityPowerup* powerup;
 private:
 	void Tick();
 	bool genetic;

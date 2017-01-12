@@ -22,8 +22,10 @@ public:
 
 	std::vector<CEntityVertex*> vertexList;
 	std::vector<CEntityEdge*> edgeList;
+	
 
 	CEntityVertex* baseVertex;
+	CEntityVertex* powerupVertex;
 private:
 	CEngine* engine;
 };

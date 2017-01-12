@@ -10,6 +10,8 @@
 #include "CEntityBee.h"
 #include "CState.h"
 
+class CState;
+
 class CEntityImker : public CEntity, public IDrawListener
 {
 public:

@@ -11,6 +11,7 @@
 #include "CEntityBee.h"
 #include "CEntityMapBackground.h"
 #include "CGraph.h"
+#include "CEntityPowerup.h"
 #include "CEntityImker.h"
 #include "CDebugLogger.h"
 #include <math.h>
@@ -516,6 +517,10 @@ void CEngine::Start()
 	graph->AddEdge(new CEntityEdge(this, vertex180, vertex181));
 	graph->AddEdge(new CEntityEdge(this, vertex325, vertex322));
 	graph->AddEdge(new CEntityEdge(this, vertex204, vertex327));
+
+	graph->powerupVertex = graph->vertexList.at(CIntegerHelper::GetRandomIntBetween(0, graph->vertexList.size() - 1));
+	powerup = new CEntityPowerup(this);
+	powerup->position = graph->powerupVertex->position;
 
 	imker = new CEntityImker(this);
 

@@ -3,16 +3,14 @@
 #include "CStateToBase.h"
 #include "CIntegerHelper.h"
 #include "CStateTrip.h"
+#include "CEntityPowerup.h"
 
 void CStateGetPowerup::Execute(CEntityImker * imker)
 {
-	if (randomVertex == nullptr) {
-		randomVertex = imker->engine->graph->vertexList.at(CIntegerHelper::GetRandomIntBetween(0, imker->engine->graph->vertexList.size() - 1));
-	}
+	imker->WalkTo(imker->engine->graph->powerupVertex);
 
-	imker->WalkTo(randomVertex);
-
-	if (imker->currentVertex == randomVertex) {
+	if (imker->currentVertex == imker->engine->graph->powerupVertex) {
+		imker->engine->graph->powerupVertex = nullptr;
 		imker->beeCounter = 0;
 		imker->ChangeState(new CStateTrip());
 	}

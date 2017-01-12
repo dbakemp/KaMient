@@ -141,6 +141,7 @@ xcopy "$(SolutionDir)\KMINT\Resources\*.*" "$(TargetDir)Resources" /Y /I /E</Com
     <ClCompile Include="CEntityImker.cpp" />
     <ClCompile Include="CEntityManager.cpp" />
     <ClCompile Include="CEntityMapBackground.cpp" />
+    <ClCompile Include="CEntityPowerup.cpp" />
     <ClCompile Include="CEntityVertex.cpp" />
     <ClCompile Include="CGraph.cpp" />
     <ClCompile Include="CInputManager.cpp" />
@@ -167,6 +168,7 @@ xcopy "$(SolutionDir)\KMINT\Resources\*.*" "$(TargetDir)Resources" /Y /I /E</Com
     <ClInclude Include="CEntityImker.h" />
     <ClInclude Include="CEntityManager.h" />
     <ClInclude Include="CEntityMapBackground.h" />
+    <ClInclude Include="CEntityPowerup.h" />
     <ClInclude Include="CEntityVertex.h" />
     <ClInclude Include="CGraph.h" />
     <ClInclude Include="CInputManager.h" />
