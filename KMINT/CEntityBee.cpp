@@ -14,7 +14,7 @@ CEntityBee::CEntityBee(CEngine * engine, std::string bitstring) : CEntity(engine
 	SDL_QueryTexture(texture, NULL, NULL, &dstrect.w, &dstrect.h);
 
 	acceleration = { 0, 0 };
-	position = { (float)CIntegerHelper::GetRandomIntBetween(0, 600) , (float)CIntegerHelper::GetRandomIntBetween(0, 600) };
+	position = { (float)CIntegerHelper::GetRandomIntBetween(0, 300) , (float)CIntegerHelper::GetRandomIntBetween(0, 300) };
 	float angle = CIntegerHelper::GetRandomIntBetween(0, M_PI*2);
 	velocity = {cos(angle), sin(angle)};
 	r = dstrect.w/2;

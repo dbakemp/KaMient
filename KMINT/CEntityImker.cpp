@@ -57,7 +57,7 @@ void CEntityImker::Update()
 
 	if (radiusTicks == 60) {
 		radiusTicks = 0;
-		radius += 10;
+		radius += 5;
 	}
 
 	ticks++;
